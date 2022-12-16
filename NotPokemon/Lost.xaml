@@ -1,0 +1,18 @@
+﻿<Page x:Class="NotPokemon.Lost"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:NotPokemon"
+      mc:Ignorable="d" 
+      d:DesignHeight="500" d:DesignWidth="600"
+      Title="Lost">
+
+    <Grid Background="Black">
+        <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Center">
+            <TextBlock Foreground="Red" Margin="0, 0, 0, 20" FontFamily="Segoe Print" FontSize="48" FontWeight="Bold">You've lost!</TextBlock>
+            <Button Background="AliceBlue" Cursor="Hand" Width="200" Height="40" Margin="0, 10, 0, 10" x:Name="playagain" Click="playagain_Click" FontFamily="Segoe Print" FontSize="20">Play again?</Button>
+            <Button Background="AliceBlue" Cursor="Hand" Width="200" Height="40" Margin="0, 10, 0, 150" x:Name="backtomm" Click="backtomm_Click" FontFamily="Segoe Print" FontSize="20">Return to menu</Button>
+        </StackPanel>
+    </Grid>
+</Page>
