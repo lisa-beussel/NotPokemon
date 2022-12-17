@@ -24,6 +24,7 @@ namespace NotPokemon
         {
             InitializeComponent();
 
+            //directly goes to main menu
             MainMenu mm = new MainMenu();
             WindowFrame.NavigationService.Navigate(mm);
         }

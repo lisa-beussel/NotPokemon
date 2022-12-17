@@ -25,18 +25,21 @@ namespace NotPokemon
             InitializeComponent();
         }
 
+        //goes to the game
         private void gotogame_Click(object sender, RoutedEventArgs e)
         {
             Game game = new Game();
             this.NavigationService.Navigate(game);
         }
 
+        //goes to the database
         private void gotodb_Click(object sender, RoutedEventArgs e)
         {
             Database db = new Database();
             this.NavigationService.Navigate(db);
         }
 
+        //quits the app
         private void quit_Click(object sender, RoutedEventArgs e)
         {
             App.Current.Shutdown();

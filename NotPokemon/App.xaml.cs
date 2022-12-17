@@ -14,9 +14,11 @@ namespace NotPokemon
     /// </summary>
     public partial class App : Application
     {
+        //for the database
         protected override void OnStartup(StartupEventArgs e)
         {
             DatabaseFacade facade = new DatabaseFacade(new DataContext());
+            //creates the database if there's none
             facade.EnsureCreated();
         }
     }

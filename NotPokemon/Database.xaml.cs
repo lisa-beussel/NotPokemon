@@ -24,16 +24,18 @@ namespace NotPokemon
         public Database()
         {
             InitializeComponent();
+            //shows data
             Read();
         }
 
+        //a list for all the monsters
         public List<Monster> MonsterList { get; private set; }
 
         public void Create()
         {
             using (DataContext context = new DataContext())
             {
-
+                //takes input from the page
                 var newName = nameinput.Text;
                 var newType = typeinput.Text;
                 var newHP = hpinput.Text;
@@ -42,8 +44,10 @@ namespace NotPokemon
                 bool newCBP = playerinput.IsChecked.Value;
                 bool newCBE = enemyinput.IsChecked.Value;
 
+                //making sure the values aren't empty
                 if (newName != "" && newType != "" && newHP != "" && newMP != "" && newAttack != "")
                 {
+                    //creates a new monster and converts the values if needed
                     context.Monsters.Add(new Monster
                     {
                         Name = newName,
@@ -55,6 +59,7 @@ namespace NotPokemon
                         CanBeEnemy = newCBE
                     });
 
+                    //saves changes made to the database
                     context.SaveChanges();
 
                 }
@@ -64,9 +69,11 @@ namespace NotPokemon
                 }
             }
 
+            //changes are displayed right away
             Read();
         }
 
+        //this method fetches the data from the database and displays it
         public void Read()
         {
             using (DataContext context = new DataContext())
@@ -80,8 +87,10 @@ namespace NotPokemon
         {
             using (DataContext context = new DataContext())
             {
+                //saves the monster that was selected on the list in a variable
                 Monster selectedMonster = ListOfMonsters.SelectedItem as Monster;
 
+                //saves the input in variables
                 var newName = nameinput.Text;
                 var newType = typeinput.Text;
                 var newHP = hpinput.Text;
@@ -90,10 +99,14 @@ namespace NotPokemon
                 bool newCBP = playerinput.IsChecked.Value;
                 bool newCBE = enemyinput.IsChecked.Value;
 
+                //makes sure the variables aren't empty
                 if (selectedMonster != null && newName != "" && newType != "" && newHP != "" && newMP != "" && newAttack != "")
                 {
+                    //selects the monster from the database that has the same id as the
+                    //monster selected in the list
                     Monster editMonster = context.Monsters.Find(selectedMonster.Id);
 
+                    //changes data
                     editMonster.Name = newName;
                     editMonster.Type = char.Parse(newType);
                     editMonster.HP = Int16.Parse(newHP);
@@ -102,6 +115,7 @@ namespace NotPokemon
                     editMonster.CanBePlayer = newCBP;
                     editMonster.CanBeEnemy = newCBE;
 
+                    //saves changes
                     context.SaveChanges();
                 }
                 else
@@ -114,6 +128,7 @@ namespace NotPokemon
             Read();
         }
 
+        //this method deletes a single monster from the database
         public void Delete()
         {
             using (DataContext context = new DataContext())
@@ -133,25 +148,30 @@ namespace NotPokemon
                 }
             }
 
+            //changes are displayed right away
             Read();
         }
 
+        //button for create/add
         private void add_Click(object sender, RoutedEventArgs e)
         {
             Create();
         }
 
+        //button to go back to the main menu
         private void gotomm_Click(object sender, RoutedEventArgs e)
         {
             MainMenu mm = new MainMenu();
             this.NavigationService.Navigate(mm);
         }
 
+        //button to update
         private void update_Click(object sender, RoutedEventArgs e)
         {
             Update();
         }
 
+        //button to delete
         private void delete_Click(object sender, RoutedEventArgs e)
         {
             Delete();

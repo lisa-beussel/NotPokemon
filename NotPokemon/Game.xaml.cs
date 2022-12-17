@@ -25,9 +25,11 @@ namespace NotPokemon
         {
             InitializeComponent();
 
+            //setting everything up
             SetValues();
         }
 
+        //variables for the player
         private string pName;
         private int pHPMax;
         private int pHPcurrent;
@@ -36,6 +38,7 @@ namespace NotPokemon
         private int pAttack;
         private char pType;
 
+        //variables for the enemy
         private string eName;
         private int eHPMax;
         private int eHPcurrent;
@@ -44,7 +47,7 @@ namespace NotPokemon
         private int eAttack;
         private char eType;
 
-        //how much HP does heal heal?
+        //how much HP does 'heal' heal?
         private int healingpower = 40;
 
         //how many MP are regenerated each round?
@@ -56,32 +59,41 @@ namespace NotPokemon
         //how many MP are needed to use magic?
         private int magicMP = 30;
 
+        //keeping track of the state of the fight
         enum BattleState { pTurn, eTurn, Won, Lost }
         BattleState bs;
 
+        //list of all monsters, used to pick a monster for the player and the enemy
         public List<Monster> MonsterList { get; private set; }
 
+        //this method fetches the monsters from the database and picks one
+        //for the player and one for the enemy. It then sets everything
+        //(name, hp, mp) up and gets the fight ready.
         private void SetValues()
         {
             using (DataContext context = new DataContext())
             {
                 MonsterList = context.Monsters.ToList();
 
+                //the monsters for player and enemy are picked randomly.
                 Random r = new Random();
 
+                //making sure it picks a monster that can be the player's monster
+                //see canbeplayer in database
                 Monster playerMonster = MonsterList[r.Next(0, MonsterList.Count)];
                 while(!playerMonster.CanBePlayer)
                 {
                     playerMonster = MonsterList[r.Next(0, MonsterList.Count)];
                 }
 
+                //same goes for the enemy
                 Monster enemyMonster = MonsterList[r.Next(0, MonsterList.Count)];
                 while (!enemyMonster.CanBeEnemy)
                 {
                     enemyMonster = MonsterList[r.Next(0, MonsterList.Count)];
                 }
 
-
+                //getting all the values from the database and saving them in variables
                 pName = playerMonster.Name;
                 pHPMax = playerMonster.HP;
                 pHPcurrent = pHPMax;
@@ -114,13 +126,14 @@ namespace NotPokemon
             HideButtons(false);
         }
 
+        //player chooses 'attack'
         private void actionA_Click(object sender, RoutedEventArgs e)
         {
             if (bs == BattleState.pTurn)
             {
                 HideButtons(true);
                 eHPcurrent -= pAttack;
-                //if enemy is dead
+                //if enemy is killed
                 if (eHPcurrent <= 0)
                 {
                     eHPcurrent = 0;
@@ -137,17 +150,20 @@ namespace NotPokemon
             }
         }
 
+        //player chooses 'magic'
         private void actionM_Click(object sender, RoutedEventArgs e)
         {
             if (bs == BattleState.pTurn)
             {
                 HideButtons(true);
+
+                //only works if player has enough MP
                 if (pMPcurrent >= magicMP)
                 {
                     pMPcurrent -= magicMP;
                     pmp.Content = pMPcurrent + "/" + pMPMax;
                     eHPcurrent -= CalculateDamage(pType, eType);
-                    //if enemy is dead
+                    //if enemy is killed
                     if (eHPcurrent <= 0)
                     {
                         eHPcurrent = 0;
@@ -171,6 +187,10 @@ namespace NotPokemon
             }
         }
 
+        //calculating the amount of damage a magic attack does
+        //3 types: fire, water, plant
+        //works like rock, paper, scissor
+        //fire beats plant, plant beats water, water beats fire
         private int CalculateDamage(char attacker, char victim)
         {
             // low damage, normal damage, high damage
@@ -178,6 +198,7 @@ namespace NotPokemon
             int nd = 30;
             int hd = 50;
 
+            //I used switches so it's easier to add more types in the future
             switch (attacker)
             {
                 case 'f':
@@ -237,12 +258,14 @@ namespace NotPokemon
             }
         }
 
+        //if player chooses 'heal'
         private void actionH_Click(object sender, RoutedEventArgs e)
         {
             if (bs == BattleState.pTurn)
             {
                 HideButtons(true);
 
+                //only works if player has enough MP
                 if (pMPcurrent >= healMP)
                 {
                     pMPcurrent -= healMP;
@@ -264,10 +287,11 @@ namespace NotPokemon
             }
         }
 
+        //enemy attacks
         private void EnemyAttack()
         {
             pHPcurrent -= eAttack;
-            //if player is dead
+            //if player is killed
             if (pHPcurrent <= 0)
             {
                 pHPcurrent = 0;
@@ -284,14 +308,16 @@ namespace NotPokemon
             php.Content = pHPcurrent + "/" + pHPMax;
         }
 
+        //enemy uses magic
         private void EnemyMagic()
         {
+            //only works if enemy has enough MP
             if (eMPcurrent >= magicMP)
             {
                 eMPcurrent -= magicMP;
                 emp.Content = eMPcurrent + "/" + eMPMax;
                 pHPcurrent -= CalculateDamage(eType, pType);
-                //if player is dead
+                //if player is killed
                 if (pHPcurrent <= 0)
                 {
                     pHPcurrent = 0;
@@ -316,8 +342,14 @@ namespace NotPokemon
             }
         }
 
+        //enemy heals
         private void EnemyHeal()
         {
+            //only works with enough MP
+            //as of now, this will always be true as the enemy checks its MP before
+            //deciding to heal or not. However, if something goes wrong
+            //or changes are made to the game in the future, it is possible for the
+            //enemy to fail at healing.
             if (eMPcurrent >= healMP)
             {
                 eMPcurrent -= healMP;
@@ -340,6 +372,9 @@ namespace NotPokemon
             }
         }
 
+        //AI decides what to do
+        //will heal at low HP and with enough MP
+        //else, it either attacks normally or with magic, decided randomly
         private void EnemysTurn()
         {
             if (eHPcurrent < eHPMax/2 && eMPcurrent >= healMP)
@@ -361,6 +396,9 @@ namespace NotPokemon
             }
         }
 
+        //It's called 'HideButtons' because it used to hide them, but
+        //I changed it to disabling them instead because I think that looks nicer.
+        //Will disable the buttons for the player and enable a 'continue' button
         private void HideButtons(bool hide)
         {
             if(hide)
@@ -379,10 +417,12 @@ namespace NotPokemon
             }
         }
 
+        //chooses the next step, depending on the battle state
         private void NextStep()
         {
             switch (bs)
             {
+                //enemy's turn
                 case BattleState.eTurn:
                     eMPcurrent += moreMP;
                     if (eMPcurrent > eMPMax)
@@ -393,6 +433,7 @@ namespace NotPokemon
                     EnemysTurn();
                     break;
 
+                //player's turn
                 case BattleState.pTurn:
                     pMPcurrent += moreMP;
                     if (pMPcurrent > pMPMax)
@@ -403,11 +444,13 @@ namespace NotPokemon
                     HideButtons(false);
                     break;
 
+                //player has won; goes to winning screen
                 case BattleState.Won:
                     Win win = new Win();
                     this.NavigationService.Navigate(win);
                     break;
 
+                //player has lost; goes to losing screen
                 case BattleState.Lost:
                     Lost lost = new Lost();
                     this.NavigationService.Navigate(lost);
@@ -415,12 +458,14 @@ namespace NotPokemon
             }
         }
 
+        //quits the game and returns to main menu
         private void quit_Click(object sender, RoutedEventArgs e)
         {
             MainMenu mm = new MainMenu();
             this.NavigationService.Navigate(mm);
         }
 
+        //goes to the next step once player clicks the 'okay'/'continue' button
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {
             NextStep();

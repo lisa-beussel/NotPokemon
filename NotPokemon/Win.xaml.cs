@@ -25,12 +25,14 @@ namespace NotPokemon
             InitializeComponent();
         }
 
+        //goes back to the game
         private void playagain_Click(object sender, RoutedEventArgs e)
         {
             Game game = new Game();
             this.NavigationService.Navigate(game);
         }
 
+        //goes to main menu
         private void backtomm_Click(object sender, RoutedEventArgs e)
         {
             MainMenu mm = new MainMenu();

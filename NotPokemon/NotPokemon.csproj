@@ -8,7 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\image not found.png" />
+    <None Remove="Assets\enemy.png" />
+    <None Remove="Assets\player.png" />
     <None Remove="Assets\title.png" />
   </ItemGroup>
 
@@ -18,7 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\image not found.png" />
+    <Resource Include="Assets\enemy.png" />
+    <Resource Include="Assets\player.png" />
     <Resource Include="Assets\title.png" />
   </ItemGroup>
 
