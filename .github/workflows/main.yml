@@ -16,4 +16,4 @@ jobs:
           
       - run: dotnet restore NotPokemon/NotPokemon.csproj
       - run: dotnet build NotPokemon/NotPokemon.csproj -c Release --no-restore
-      - run: dotnet publish NotPokemon/NotPokemon.csproj -c Release --self-contained -r win-x64 -p:PublishSingleFile=true
+      - run: dotnet publish NotPokemon/NotPokemon.csproj -c Release --self-contained -r win-x64 -p:PublishSingleFile=true --no-build
