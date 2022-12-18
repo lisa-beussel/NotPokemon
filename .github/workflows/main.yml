@@ -1,0 +1,19 @@
+name: "main"
+
+on:
+  push:
+    tags:
+    - "notpokemon/v*"
+    
+jobs:
+  deploy:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.x
+          
+      - run: dotnet restore NotPokemon/NotPokemon.csproj
+      - run: dotnet build NotPokemon/NotPokemon.csproj -c Release --no-restore
+      - run: dotnet publish NotPokemon/NotPokemon.csproj -c Release --self-contained -r win-x64 -p:PublishSingleFile=true
